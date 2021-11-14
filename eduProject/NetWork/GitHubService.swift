@@ -1,0 +1,154 @@
+//
+//  NetworkService.swift
+//  eduProject
+//
+//  Created by Ксения Каштанкина on 14.11.2021.
+//
+
+import Foundation
+
+class GitHubService {
+    
+    static let shared = GitHubService()
+    
+    var user : User?
+    var token : String?
+    var userName : String?
+     
+    
+    private init () {}
+    
+    func getRepositories(completion: @escaping ([Repositary]?) -> Void) {
+        
+
+        guard let userName = self.userName, let token = self.token else {
+            completion( nil)
+            return
+        }
+
+        guard let URL = URL(string: "https://api.github.com/user/repos") else {
+            completion( nil)
+            return
+        }
+        var request = URLRequest(url: URL)
+        request.httpMethod = "GET"
+
+        // Headers
+
+        let userTokenBase64 = Data("\(userName):\(token)".utf8).base64EncodedString()
+        
+        request.addValue("Basic " + userTokenBase64, forHTTPHeaderField: "Authorization")
+
+        /* Start a new Task */
+        DispatchQueue.global(qos: .background).async {
+        
+            let task = URLSession.shared.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
+                if error == nil,
+                    let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == 200,
+                    let data = data,
+                   let repos = try? JSONDecoder().decode([Repositary].self, from: data) {
+                    
+                    DispatchQueue.main.async {
+                        completion(repos)
+                    }
+                } else {
+                    // Failure
+                    DispatchQueue.main.async {
+                        completion(nil)
+                    }
+                }
+            })
+            
+            task.resume()
+        }
+        
+        //session.finishTasksAndInvalidate()
+        
+    }
+    
+    func getInfoRepo(repoName: String, completion: @escaping (Repositary?) -> Void) {
+        
+        guard let userName = self.userName, let token = self.token else {
+            completion( nil)
+            return
+        }
+
+        guard let URL = URL(string: "https://api.github.com/repos/\(repoName)") else {
+            completion( nil)
+            return
+        }
+        var request = URLRequest(url: URL)
+        request.httpMethod = "GET"
+
+        // Headers
+
+        let userTokenBase64 = Data("\(userName):\(token)".utf8).base64EncodedString()
+        
+        request.addValue("Basic " + userTokenBase64, forHTTPHeaderField: "Authorization")
+
+        /* Start a new Task */
+        DispatchQueue.global(qos: .background).async {
+        
+            let task = URLSession.shared.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
+                if error == nil,
+                    let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == 200,
+                    let data = data,
+                    let repoDecoded = try? JSONDecoder().decode(Repositary.self, from: data) {
+                    
+                    DispatchQueue.main.async {
+                        completion(repoDecoded)
+                    }
+                } else {
+                    // Failure
+                    DispatchQueue.main.async {
+                        completion(nil)
+                    }
+                }
+            })
+            
+            task.resume()
+        }
+    }
+    
+    
+    func authenticateUsr(user: String, token: String, completion: @escaping (Bool) -> Void) {
+
+        
+        guard var URL = URL(string: "https://api.github.com/user") else {return completion(false)}
+        var request = URLRequest(url: URL)
+        request.httpMethod = "GET"
+
+        // Headers
+
+        let userTokenBase64 = Data("\(user):\(token)".utf8).base64EncodedString()
+        
+        request.addValue("Basic " + userTokenBase64, forHTTPHeaderField: "Authorization")
+
+        /* Start a new Task */
+        DispatchQueue.global(qos: .background).async {
+        
+            let task = URLSession.shared.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
+                if error == nil, let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == 200, let data = data {
+                    let user = try? JSONDecoder().decode(User.self, from: data)
+                    
+                    self.user = user
+                    self.userName = user?.login
+                    self.token = token
+                    
+                    DispatchQueue.main.async {
+                        completion(true)
+                    }
+                } else {
+                    // Failure
+                    DispatchQueue.main.async {
+                        completion(false)
+                    }
+                }
+            })
+            
+            task.resume()
+        }
+        //session.finishTasksAndInvalidate()
+    }
+   
+}
