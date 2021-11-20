@@ -24,6 +24,7 @@
 		C914C89927429F330093AFC3 /* TableViewCellCommit.xib in Resources */ = {isa = PBXBuildFile; fileRef = C914C89727429F330093AFC3 /* TableViewCellCommit.xib */; };
 		C914C89B2742AE240093AFC3 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C89A2742AE240093AFC3 /* DetailViewController.swift */; };
 		C951AF4527492B9500D2C29E /* imagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951AF4427492B9500D2C29E /* imagesService.swift */; };
+		C951AF472749622E00D2C29E /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951AF462749622E00D2C29E /* DataService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		C914C89727429F330093AFC3 /* TableViewCellCommit.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCellCommit.xib; sourceTree = "<group>"; };
 		C914C89A2742AE240093AFC3 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		C951AF4427492B9500D2C29E /* imagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imagesService.swift; sourceTree = "<group>"; };
+		C951AF462749622E00D2C29E /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				C914C88F27410DA60093AFC3 /* dataModel.swift */,
+				C951AF462749622E00D2C29E /* DataService.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -110,16 +113,16 @@
 		C914C895274178F10093AFC3 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				C914C889274105C00093AFC3 /* MyTabBarVC.swift */,
+				C914C8752735277B0093AFC3 /* Main.storyboard */,
 				C914C8732735277B0093AFC3 /* ViewController.swift */,
-				C914C89A2742AE240093AFC3 /* DetailViewController.swift */,
 				C914C887273C29900093AFC3 /* StarredViewController.swift */,
+				C914C885273C29770093AFC3 /* MainViewController.swift */,
 				C914C88B274108E70093AFC3 /* MainTableViewCell.swift */,
 				C914C88C274108E70093AFC3 /* MainTableViewCell.xib */,
+				C914C89A2742AE240093AFC3 /* DetailViewController.swift */,
 				C914C89627429F330093AFC3 /* TableViewCellCommit.swift */,
 				C914C89727429F330093AFC3 /* TableViewCellCommit.xib */,
-				C914C8752735277B0093AFC3 /* Main.storyboard */,
-				C914C885273C29770093AFC3 /* MainViewController.swift */,
-				C914C889274105C00093AFC3 /* MyTabBarVC.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -198,6 +201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C914C89B2742AE240093AFC3 /* DetailViewController.swift in Sources */,
+				C951AF472749622E00D2C29E /* DataService.swift in Sources */,
 				C914C888273C29900093AFC3 /* StarredViewController.swift in Sources */,
 				C914C8742735277B0093AFC3 /* ViewController.swift in Sources */,
 				C914C89827429F330093AFC3 /* TableViewCellCommit.swift in Sources */,

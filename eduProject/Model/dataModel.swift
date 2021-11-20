@@ -216,5 +216,13 @@ class ElementCommit : Decodable {
     }
 }
 
+extension Repositary : Equatable {
+    
+    static func == (lhs: Repositary, rhs: Repositary) -> Bool {
+        return lhs.fullName == rhs.fullName
+    }
+    
+}
+
 
 

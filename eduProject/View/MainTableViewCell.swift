@@ -22,7 +22,12 @@ class MainTableViewCell: UITableViewCell {
     @IBOutlet private weak var forksLbl: UILabel!
     
     @IBOutlet weak var starsLbl: UILabel!
+        
+    @IBOutlet weak var favBtn: UIButton!
     
+    var rep: Repositary?
+    
+    var chooseFavorite : ((Repositary) -> Void)? = nil
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,17 +40,30 @@ class MainTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configure(text: String, text2: String?, lang: String, forks: Int, stars : Int, owner : User?, avatar: UIImage?) {
-        lblMain.text = text
-        lbl2.text = text2 ?? ""
-        foto.image = avatar
-        langLbl.text = lang
-        forksLbl.text = "⑂" + String(forks)
-        starsLbl.text = "✮" + String(stars)
-        authorLbl.text = owner?.login
+    func configure(fav: Bool) {
+        lblMain.text = rep?.name
+        lbl2.text = rep?.description ?? ""
+        foto.image = rep?.avatar
+        langLbl.text = rep?.language
+        forksLbl.text = "⑂" + String(rep?.forksCount ?? 0)
+        starsLbl.text = "✮" + String(rep?.stars ?? 0)
+        authorLbl.text = rep?.owner?.login
         
         foto.layer.cornerRadius = foto.frame.height / 2
         
+        if fav {
+            favBtn.setTitle("❤️", for: .normal)
+        } else {
+            favBtn.setTitle("🤍", for: .normal)
+        }
+        
+    }
+    
+    
+    @IBAction func favoriteAction(_ sender: Any) {
+        if let rep = self.rep, let favAction = self.chooseFavorite {
+            favAction(rep)
+        }
     }
     
 }

@@ -20,7 +20,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         //loginTextView.text = "xuxaxu"
-        tokenTextView.text = "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"
+        tokenTextView.text = "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"
     }
 
    

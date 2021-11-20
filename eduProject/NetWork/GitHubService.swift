@@ -99,7 +99,11 @@ class GitHubService {
                    let repoDecoded = try? JSONDecoder().decode([ElementCommit].self, from: data) {
                     
                     DispatchQueue.main.async {
-                        completion(repoDecoded)
+                        if repoDecoded.count > 10 {
+                            completion(repoDecoded.dropLast(repoDecoded.count - 10))
+                        } else {
+                            completion(repoDecoded)
+                        }
                     }
                 } else {
                     // Failure
