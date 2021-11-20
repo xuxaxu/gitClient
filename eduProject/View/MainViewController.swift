@@ -92,4 +92,16 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource {
         return 104//UITableView.automaticDimension
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row < repositaries.count {
+            let repoToShow = repositaries[indexPath.row]
+            if let nc = self.navigationController {
+                let sb = UIStoryboard(name: "Main", bundle: nil)
+                let newVC = sb.instantiateViewController(withIdentifier: "detailVCid") as! DetailViewController
+                newVC.repo = repoToShow
+                nc.pushViewController(newVC, animated: true)
+            }
+        }
+    }
+    
 }

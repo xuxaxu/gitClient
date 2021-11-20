@@ -11,7 +11,8 @@ import UIKit
 class DataModel {
     
     weak var delegate : DataModelDelegate?
-
+    weak var delegateCommit : DataModelCommitDelegate?
+    
     func loadData() {
         GitHubService.shared.getRepositories { repos in
             
@@ -26,18 +27,41 @@ class DataModel {
     }
     
     func loadImages(repos: [Repositary]) {
-        DispatchQueue.global(qos: .background).async {
-            for rep in repos {
-                if let avUrl = rep.owner?.avatarUrl,
-                   let url = URL.init(string: avUrl),
-                   let data = try? Data(contentsOf: url),
-                   let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            self.delegate?.avatarLoaded(img: image, repoName: rep.name ?? "")
-                        }
+        for rep in repos {
+                if let avUrl = rep.owner?.avatarUrl {
+                    ImagesService.shared.getImage(url: avUrl) { image in
+                        if let img = image {
+                            self.delegate?.avatarLoaded(img: img, repoName: rep.name ?? "")
+                        } 
+                    }
+                        
                     }
             }
+    }
+    
+    func loadCommits(commitsUrl: String) {
+        GitHubService.shared.getInfoRepo(commitsUrl: commitsUrl) { commits in
+            guard let elementsCommit = commits else {
+                self.delegateCommit?.error()
+                return
+            }
+            
+            self.delegateCommit?.dataDidRecieve(data: elementsCommit)
+            
+            self.loadImagesOfCommits(commits: elementsCommit)
         }
+    }
+    
+    func loadImagesOfCommits(commits: [ElementCommit]) {
+            for (indx,elmt) in commits.enumerated() {
+                if let avUrl = elmt.committer?.avatarUrl {
+                    ImagesService.shared.getImage(url: avUrl) { image in
+                    if let img = image {
+                        self.delegateCommit?.avatarLoaded(img: img, index: indx)
+                    }
+                }
+            }
+            }
     }
     
 }
@@ -60,6 +84,7 @@ class Repositary : Decodable {
     var fullName : String?
     var owner : User?
     var avatar : UIImage?
+    var commitsUrl : String?
      
     enum CodingKeys: String, CodingKey {
            case description = "description"
@@ -69,20 +94,21 @@ class Repositary : Decodable {
             case stars = "stargazers_count"
             case fullName = "full_name"
             case owner = "owner"
-            
+            case commitsUrl = "commits_url"
        }
     
     required init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
                 
-             self.description = try? container.decode(String.self, forKey: .description)
-             self.language = try? container.decode(String.self, forKey: .language)
-            self.forksCount = try? container.decode(Int.self, forKey: .forksCount)
-            self.name = try? container.decode(String.self, forKey: .name)
-            self.stars = try? container.decode(Int.self, forKey: .stars)
-            self.fullName = try? container.decode(String.self, forKey: .fullName)
-            self.owner = try? container.decode(User.self, forKey: .owner)
-        }
+        self.description = try? container.decode(String.self, forKey: .description)
+        self.language = try? container.decode(String.self, forKey: .language)
+        self.forksCount = try? container.decode(Int.self, forKey: .forksCount)
+        self.name = try? container.decode(String.self, forKey: .name)
+        self.stars = try? container.decode(Int.self, forKey: .stars)
+        self.fullName = try? container.decode(String.self, forKey: .fullName)
+        self.owner = try? container.decode(User.self, forKey: .owner)
+        self.commitsUrl = try? container.decode(String.self, forKey: .commitsUrl)
+    }
     
     
 }
@@ -91,6 +117,12 @@ protocol DataModelDelegate: AnyObject {
     func dataDidRecieve(data: [Repositary])
     func error()
     func avatarLoaded(img: UIImage, repoName: String)
+}
+
+protocol DataModelCommitDelegate: AnyObject {
+    func dataDidRecieve(data: [ElementCommit])
+    func error()
+    func avatarLoaded(img: UIImage, index: Int)
 }
 
 struct User : Decodable {
@@ -126,6 +158,61 @@ extension UIImageView {
                 }
             }
         }
+    }
+}
+
+class Commit : Decodable {
+    
+    var massage : String?
+    var commitDate : DateOfCommit?
+    
+    enum CodingKeys: String, CodingKey {
+           case massage = "massage"
+           case commitDate = "committer"
+            
+       }
+    
+    required init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+                
+        self.massage = try? container.decode(String.self, forKey: .massage)
+        self.commitDate = try? container.decode(DateOfCommit.self, forKey: .commitDate)
+        }
+    
+}
+
+class DateOfCommit : Decodable {
+    var email : String?
+    var date : String?
+    
+    enum CodingKeys : String, CodingKey {
+        case email = "email"
+        case date = "date"
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.email = try? container.decode(String.self, forKey: .email)
+        self.date = try? container.decode(String.self, forKey: .date)
+    }
+}
+
+class ElementCommit : Decodable {
+    var commit : Commit?
+    var committer : User?
+    var avatar : UIImage?
+    
+    enum CodingKeys : String, CodingKey {
+        case commit = "commit"
+        case committer = "committer"
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.commit = try? container.decode(Commit.self, forKey: .commit)
+        self.committer = try? container.decode(User.self, forKey: .committer)
     }
 }
 

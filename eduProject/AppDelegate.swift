@@ -14,6 +14,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        //clear navigation bar
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+            // Sets shadow (line below the bar) to a blank image
+            UINavigationBar.appearance().shadowImage = UIImage()
+            // Sets the translucent background color
+            UINavigationBar.appearance().backgroundColor = .clear
+            // Set translucent. (Default value is already true, so this can be removed if desired.)
+            UINavigationBar.appearance().isTranslucent = true
+        
+        //clear tab bar
+        UITabBar.appearance().barTintColor = .systemTeal
+        UITabBar.appearance().tintColor = .systemTeal
+        UITabBar.appearance().isTranslucent = true
+        UITabBar.appearance().backgroundColor = .systemTeal
+        UITabBar.appearance().backgroundImage = nil
+        UITabBar.appearance().shadowImage = nil
+        
         return true
     }
 

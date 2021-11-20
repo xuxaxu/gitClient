@@ -26,7 +26,7 @@ class GitHubService {
             return
         }
 
-        guard let URL = URL(string: "https://api.github.com/user/repos") else {
+        guard let URL =  URL(string: "https://api.github.com/repositories") else { //URL(string: "https://api.github.com/user/repos") else {
             completion( nil)
             return
         }
@@ -66,18 +66,21 @@ class GitHubService {
         
     }
     
-    func getInfoRepo(repoName: String, completion: @escaping (Repositary?) -> Void) {
+    func getInfoRepo(commitsUrl: String, completion: @escaping ([ElementCommit]?) -> Void) {
         
         guard let userName = self.userName, let token = self.token else {
             completion( nil)
             return
         }
-
-        guard let URL = URL(string: "https://api.github.com/repos/\(repoName)") else {
+        
+        let commitStr = commitsUrl.replacingOccurrences(of: "{/sha}", with: "")
+        
+        
+        guard let comUrl = URL(string: commitStr) else {
             completion( nil)
             return
         }
-        var request = URLRequest(url: URL)
+        var request = URLRequest(url: comUrl)
         request.httpMethod = "GET"
 
         // Headers
@@ -93,7 +96,7 @@ class GitHubService {
                 if error == nil,
                     let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == 200,
                     let data = data,
-                    let repoDecoded = try? JSONDecoder().decode(Repositary.self, from: data) {
+                   let repoDecoded = try? JSONDecoder().decode([ElementCommit].self, from: data) {
                     
                     DispatchQueue.main.async {
                         completion(repoDecoded)
@@ -114,7 +117,7 @@ class GitHubService {
     func authenticateUsr(user: String, token: String, completion: @escaping (Bool) -> Void) {
 
         
-        guard var URL = URL(string: "https://api.github.com/user") else {return completion(false)}
+        guard let URL = URL(string: "https://api.github.com/user") else {return completion(false)}
         var request = URLRequest(url: URL)
         request.httpMethod = "GET"
 

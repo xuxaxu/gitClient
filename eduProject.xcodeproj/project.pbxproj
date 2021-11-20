@@ -20,6 +20,10 @@
 		C914C88E274108E70093AFC3 /* MainTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C914C88C274108E70093AFC3 /* MainTableViewCell.xib */; };
 		C914C89027410DA60093AFC3 /* dataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C88F27410DA60093AFC3 /* dataModel.swift */; };
 		C914C89227411A270093AFC3 /* GitHubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C89127411A260093AFC3 /* GitHubService.swift */; };
+		C914C89827429F330093AFC3 /* TableViewCellCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C89627429F330093AFC3 /* TableViewCellCommit.swift */; };
+		C914C89927429F330093AFC3 /* TableViewCellCommit.xib in Resources */ = {isa = PBXBuildFile; fileRef = C914C89727429F330093AFC3 /* TableViewCellCommit.xib */; };
+		C914C89B2742AE240093AFC3 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C89A2742AE240093AFC3 /* DetailViewController.swift */; };
+		C951AF4527492B9500D2C29E /* imagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951AF4427492B9500D2C29E /* imagesService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +42,10 @@
 		C914C88C274108E70093AFC3 /* MainTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainTableViewCell.xib; sourceTree = "<group>"; };
 		C914C88F27410DA60093AFC3 /* dataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dataModel.swift; sourceTree = "<group>"; };
 		C914C89127411A260093AFC3 /* GitHubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubService.swift; sourceTree = "<group>"; };
+		C914C89627429F330093AFC3 /* TableViewCellCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellCommit.swift; sourceTree = "<group>"; };
+		C914C89727429F330093AFC3 /* TableViewCellCommit.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCellCommit.xib; sourceTree = "<group>"; };
+		C914C89A2742AE240093AFC3 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		C951AF4427492B9500D2C29E /* imagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imagesService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +93,7 @@
 		C914C893274178C30093AFC3 /* NetWork */ = {
 			isa = PBXGroup;
 			children = (
+				C951AF4427492B9500D2C29E /* imagesService.swift */,
 				C914C89127411A260093AFC3 /* GitHubService.swift */,
 			);
 			path = NetWork;
@@ -102,11 +111,14 @@
 			isa = PBXGroup;
 			children = (
 				C914C8732735277B0093AFC3 /* ViewController.swift */,
+				C914C89A2742AE240093AFC3 /* DetailViewController.swift */,
 				C914C887273C29900093AFC3 /* StarredViewController.swift */,
 				C914C88B274108E70093AFC3 /* MainTableViewCell.swift */,
+				C914C88C274108E70093AFC3 /* MainTableViewCell.xib */,
+				C914C89627429F330093AFC3 /* TableViewCellCommit.swift */,
+				C914C89727429F330093AFC3 /* TableViewCellCommit.xib */,
 				C914C8752735277B0093AFC3 /* Main.storyboard */,
 				C914C885273C29770093AFC3 /* MainViewController.swift */,
-				C914C88C274108E70093AFC3 /* MainTableViewCell.xib */,
 				C914C889274105C00093AFC3 /* MyTabBarVC.swift */,
 			);
 			path = View;
@@ -174,6 +186,7 @@
 				C914C8792735277C0093AFC3 /* Assets.xcassets in Resources */,
 				C914C88E274108E70093AFC3 /* MainTableViewCell.xib in Resources */,
 				C914C8772735277B0093AFC3 /* Main.storyboard in Resources */,
+				C914C89927429F330093AFC3 /* TableViewCellCommit.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,9 +197,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C914C89B2742AE240093AFC3 /* DetailViewController.swift in Sources */,
 				C914C888273C29900093AFC3 /* StarredViewController.swift in Sources */,
 				C914C8742735277B0093AFC3 /* ViewController.swift in Sources */,
+				C914C89827429F330093AFC3 /* TableViewCellCommit.swift in Sources */,
 				C914C8702735277B0093AFC3 /* AppDelegate.swift in Sources */,
+				C951AF4527492B9500D2C29E /* imagesService.swift in Sources */,
 				C914C88D274108E70093AFC3 /* MainTableViewCell.swift in Sources */,
 				C914C89227411A270093AFC3 /* GitHubService.swift in Sources */,
 				C914C8722735277B0093AFC3 /* SceneDelegate.swift in Sources */,
