@@ -7,66 +7,10 @@
 
 import Foundation
 import UIKit
+import RealmSwift
 
-class DataModel {
-    
-    weak var delegate : DataModelDelegate?
-    weak var delegateCommit : DataModelCommitDelegate?
-    
-    func loadData() {
-        GitHubService.shared.getRepositories { repos in
-            
-            guard let repo = repos else {
-                self.delegate?.error()
-                return
-            }
-        
-            self.loadImages(repos: repo)
-            self.delegate?.dataDidRecieve(data: repo)
-        }
-    }
-    
-    func loadImages(repos: [Repositary]) {
-        for rep in repos {
-                if let avUrl = rep.owner?.avatarUrl {
-                    ImagesService.shared.getImage(url: avUrl) { image in
-                        if let img = image {
-                            self.delegate?.avatarLoaded(img: img, repoName: rep.name ?? "")
-                        } 
-                    }
-                        
-                    }
-            }
-    }
-    
-    func loadCommits(commitsUrl: String) {
-        GitHubService.shared.getInfoRepo(commitsUrl: commitsUrl) { commits in
-            guard let elementsCommit = commits else {
-                self.delegateCommit?.error()
-                return
-            }
-            
-            self.delegateCommit?.dataDidRecieve(data: elementsCommit)
-            
-            self.loadImagesOfCommits(commits: elementsCommit)
-        }
-    }
-    
-    func loadImagesOfCommits(commits: [ElementCommit]) {
-            for (indx,elmt) in commits.enumerated() {
-                if let avUrl = elmt.committer?.avatarUrl {
-                    ImagesService.shared.getImage(url: avUrl) { image in
-                    if let img = image {
-                        self.delegateCommit?.avatarLoaded(img: img, index: indx)
-                    }
-                }
-            }
-            }
-    }
-    
-}
 
-class Repositary : Decodable {
+class Repositary : Object, Decodable  {
     
     /*
      название
@@ -76,18 +20,17 @@ class Repositary : Decodable {
     - количество звезд
     - имя автора и фото (должно быть круглым)
      */
-    var name: String?
-    var description : String?
-    var language : String?
-    var forksCount : Int?
-    var stars : Int?
-    var fullName : String?
-    var owner : User?
-    var avatar : UIImage?
-    var commitsUrl : String?
+    @Persisted var name: String?
+    @Persisted var descript : String?
+    @Persisted var language : String?
+    @Persisted var forksCount : Int?
+    @Persisted var stars : Int?
+    @Persisted var fullName : String?
+    @Persisted var owner : User?
+    @Persisted var commitsUrl : String?
      
     enum CodingKeys: String, CodingKey {
-           case description = "description"
+           case descript = "description"
            case language = "language"
             case forksCount = "forks_count"
             case name = "name"
@@ -97,132 +40,191 @@ class Repositary : Decodable {
             case commitsUrl = "commits_url"
        }
     
-    required init(from decoder: Decoder) throws {
+    convenience required init(from decoder: Decoder) throws {
+        self.init()
         let container = try decoder.container(keyedBy: CodingKeys.self)
                 
-        self.description = try? container.decode(String.self, forKey: .description)
-        self.language = try? container.decode(String.self, forKey: .language)
-        self.forksCount = try? container.decode(Int.self, forKey: .forksCount)
-        self.name = try? container.decode(String.self, forKey: .name)
-        self.stars = try? container.decode(Int.self, forKey: .stars)
-        self.fullName = try? container.decode(String.self, forKey: .fullName)
-        self.owner = try? container.decode(User.self, forKey: .owner)
-        self.commitsUrl = try? container.decode(String.self, forKey: .commitsUrl)
+        self.descript = try container.decodeIfPresent(String.self, forKey: .descript) ?? nil
+        self.language = try container.decodeIfPresent(String.self, forKey: .language) ?? nil
+        self.forksCount = try container.decodeIfPresent(Int.self, forKey: .forksCount) ?? nil
+        self.name = try? container.decodeIfPresent(String.self, forKey: .name) ?? nil
+        self.stars = try? container.decodeIfPresent(Int.self, forKey: .stars) ?? nil
+        self.fullName = try? container.decodeIfPresent(String.self, forKey: .fullName) ?? nil
+        self.owner = try? container.decodeIfPresent(User.self, forKey: .owner) ?? nil
+        self.commitsUrl = try? container.decodeIfPresent(String.self, forKey: .commitsUrl) ?? nil
     }
     
+    override class func primaryKey() -> String? {
+        return "fullName"
+    }
     
+    func copyRepo() -> Repositary {
+        let newRep = Repositary()
+        newRep.fullName = self.fullName
+        newRep.commitsUrl = self.commitsUrl
+        newRep.owner    = User()
+        newRep.owner?.avatarUrl = self.owner?.avatarUrl
+        newRep.owner?.id = self.owner?.id
+        newRep.owner?.login = self.owner?.login
+        newRep.owner?.repoUrl = self.owner?.repoUrl
+        newRep.descript = self.descript
+        newRep.language = self.language
+        newRep.forksCount = self.forksCount
+        newRep.name = self.name
+        newRep.stars = self.stars
+        
+        return newRep
+    }
 }
 
-protocol DataModelDelegate: AnyObject {
-    func dataDidRecieve(data: [Repositary])
-    func error()
-    func avatarLoaded(img: UIImage, repoName: String)
-}
-
-protocol DataModelCommitDelegate: AnyObject {
-    func dataDidRecieve(data: [ElementCommit])
-    func error()
-    func avatarLoaded(img: UIImage, index: Int)
-}
-
-struct User : Decodable {
-    var login : String?
-    var avatarUrl : String?
-    var repoUrl : String?
+class User : Object, Decodable {
+    @Persisted var login : String?
+    @Persisted var avatarUrl : String?
+    @Persisted var repoUrl : String?
+    @Persisted var id : Int?
     
     enum CodingKeys: String, CodingKey {
-           case avatarUrl = "avatar_url"
-           case repoUrl = "repos_url"
+            case avatarUrl = "avatar_url"
+            case repoUrl = "repos_url"
             case login = "login"
-           
+            case id = "id"
        }
     
-    init(from decoder: Decoder) throws {
-             let container = try decoder.container(keyedBy: CodingKeys.self)
+    convenience required init(from decoder: Decoder) throws {
+        self.init()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
                 
-             self.avatarUrl = try container.decode(String.self, forKey: .avatarUrl)
-             self.repoUrl = try container.decode(String.self, forKey: .repoUrl)
-            self.login = try container.decode(String.self, forKey: .login)
-            
-        }
-}
-
-extension UIImageView {
-    func load(url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
+        self.avatarUrl = try container.decodeIfPresent(String.self, forKey: .avatarUrl) ?? nil
+        self.repoUrl = try container.decodeIfPresent(String.self, forKey: .repoUrl) ?? nil
+        self.login = try container.decodeIfPresent(String.self, forKey: .login) ?? nil
+        self.id = try container.decodeIfPresent(Int.self, forKey: .id) ?? nil
     }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
 }
 
-class Commit : Decodable {
+
+class Commit : Object, Decodable {
     
-    var massage : String?
-    var commitDate : DateOfCommit?
+    @Persisted var massage : String?
+    @Persisted var commitDate : DateOfCommit?
     
     enum CodingKeys: String, CodingKey {
            case massage = "massage"
            case commitDate = "committer"
-            
        }
     
-    required init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
+    convenience required init(from decoder: Decoder) throws {
+        self.init()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
                 
-        self.massage = try? container.decode(String.self, forKey: .massage)
-        self.commitDate = try? container.decode(DateOfCommit.self, forKey: .commitDate)
-        }
+        massage = try container.decodeIfPresent(String.self, forKey: .massage) ?? nil
+        commitDate = try container.decodeIfPresent(DateOfCommit.self, forKey: .commitDate) ?? nil
+    }
     
 }
 
-class DateOfCommit : Decodable {
-    var email : String?
-    var date : String?
-    
+class DateOfCommit : Object, Decodable {
+    @Persisted var email : String?
+    @Persisted var date : String?
+     
     enum CodingKeys : String, CodingKey {
         case email = "email"
         case date = "date"
     }
     
-    required init(from decoder: Decoder) throws {
+    convenience required init(from decoder: Decoder) throws {
+        self.init()
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.email = try? container.decode(String.self, forKey: .email)
-        self.date = try? container.decode(String.self, forKey: .date)
+        email = try container.decodeIfPresent(String.self, forKey: .email) ?? nil
+        date = try container.decodeIfPresent(String.self, forKey: .date) ?? nil
     }
 }
 
-class ElementCommit : Decodable {
-    var commit : Commit?
-    var committer : User?
-    var avatar : UIImage?
+class ElementCommit : Object, Decodable {
+    @Persisted var commit : Commit?
+    @Persisted var committer : User?
+    @Persisted var id : String?
+    @Persisted var repoName : String?
     
     enum CodingKeys : String, CodingKey {
         case commit = "commit"
         case committer = "committer"
+        case id = "sha"
     }
     
-    required init(from decoder: Decoder) throws {
+    convenience required init(from decoder: Decoder) throws {
+        self.init()
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.commit = try? container.decode(Commit.self, forKey: .commit)
-        self.committer = try? container.decode(User.self, forKey: .committer)
+        commit = try container.decodeIfPresent(Commit.self, forKey: .commit) ?? nil
+        committer = try container.decodeIfPresent(User.self, forKey: .committer) ?? nil
+        id = try container.decodeIfPresent(String.self, forKey: .id) ?? nil
+    }
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    func copyCommit() -> ElementCommit {
+        let newCommit = ElementCommit()
+        newCommit.commit = Commit()
+        newCommit.commit?.commitDate = DateOfCommit()
+        newCommit.commit?.commitDate?.date = self.commit?.commitDate?.date
+        newCommit.commit?.commitDate?.email = self.commit?.commitDate?.email
+        newCommit.commit?.massage = self.commit?.massage
+        newCommit.committer = User()
+        newCommit.committer?.repoUrl = self.committer?.repoUrl
+        newCommit.committer?.login = self.committer?.login
+        newCommit.committer?.id = self.committer?.id
+        newCommit.committer?.avatarUrl = self.committer?.avatarUrl
+        newCommit.id = self.id
+        newCommit.repoName = self.repoName
+        
+        return newCommit
     }
 }
 
+protocol DataModelDelegate: AnyObject {
+    func refresh()
+    func error()
+    func refreshRow(index: Int)
+}
+
+/*
 extension Repositary : Equatable {
     
-    static func == (lhs: Repositary, rhs: Repositary) -> Bool {
+    override static func == (lhs: Repositary, rhs: Repositary) -> Bool {
         return lhs.fullName == rhs.fullName
     }
     
 }
+*/
 
-
+extension Array where Element: Repositary {
+    
+    func containRep(rep: Repositary) -> Int? {
+        for (inx,r) in self.enumerated() {
+            if r.fullName == rep.fullName {
+                return inx
+            }
+        }
+        return nil
+    }
+    
+    mutating func removeOrAppend(rep: Repositary) {
+        let tempRep = rep as! Element
+        for (inx, r) in self.enumerated() {
+            if r.fullName == rep.fullName {
+                self.remove(at: inx)
+                return
+            }
+        }
+        self.append(tempRep)
+    }
+}
 

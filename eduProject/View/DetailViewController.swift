@@ -27,14 +27,10 @@ class DetailViewController: UIViewController {
     
     var repo : Repositary?
     
-    private var commits : [ElementCommit] = []
-    
-    private var dataModel = DataModel()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        dataModel.delegateCommit = self
+        DataService.shared.delegateCommit = self
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "TableViewCellCommit", bundle: .main), forCellReuseIdentifier: "commitCell")
@@ -46,10 +42,10 @@ class DetailViewController: UIViewController {
     func configure() {
         if let rep = repo {
             nameRepoLbl.text = rep.name
-            avatarImgView.image = rep.avatar
+            avatarImgView.image = DataService.shared.getAvatar(url: rep.owner?.avatarUrl)
             avatarImgView.layer.cornerRadius = avatarImgView.frame.height / 2
             ownerLbl.text = rep.owner?.login
-            descriptionLbl.text = rep.description
+            descriptionLbl.text = rep.descript
             langLbl.text = rep.language
             if let forks = rep.forksCount {
                 forksLbl.text = String(forks)
@@ -57,9 +53,7 @@ class DetailViewController: UIViewController {
             if let stars = rep.stars {
                 starsLbl.text = String(stars )
             }
-            if let commitsUrl = rep.commitsUrl {
-                dataModel.loadCommits(commitsUrl: commitsUrl)
-            }
+            
         } else {
             //self.dismiss(animated: true, completion: nil)
         }
@@ -71,13 +65,13 @@ class DetailViewController: UIViewController {
 extension DetailViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return commits.count
+        return DataService.shared.currentCommits.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "commitCell", for: indexPath) as? TableViewCellCommit, indexPath.row < commits.count {
-                let elCommit = commits[indexPath.row]
-                cell.configure(date: elCommit.commit?.commitDate?.date, author: elCommit.committer?.login ?? "", avatar: elCommit.avatar ?? UIImage(), commit: elCommit.commit?.massage ?? "")
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "commitCell", for: indexPath) as? TableViewCellCommit, indexPath.row < DataService.shared.currentCommits.count {
+                let elCommit = DataService.shared.currentCommits[indexPath.row]
+            cell.configure(date: elCommit.commit?.commitDate?.date, author: elCommit.committer?.login ?? "", avatar: DataService.shared.getAvatar(url: elCommit.committer?.avatarUrl), commit: elCommit.commit?.massage ?? "")
                 return cell
         } else {
             return UITableViewCell()
@@ -94,23 +88,23 @@ extension DetailViewController : UITableViewDelegate, UITableViewDataSource {
     
 }
 
-extension DetailViewController : DataModelCommitDelegate {
-    func dataDidRecieve(data: [ElementCommit]) {
-        self.commits = data
-        self.tableView.reloadData()
+extension DetailViewController : DataModelDelegate {
+    
+    func refresh() {
+        tableView.reloadData()
+    }
+    
+    func refreshRow(index: Int) {
+        self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .fade)
     }
     
     func error() {
-        let alert = UIAlertController(title: "Repository is not available", message: "error of getting repository's detail" , preferredStyle: .alert)
+               let alert = UIAlertController(title: "Detail info is not available", message: "error of getting data of the repository", preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
-        
-         self.present(alert, animated: true)
-    }
+                alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
+               
+                self.present(alert, animated: true)
     
-    func avatarLoaded(img: UIImage, index: Int) {
-        commits[index].avatar = img
-        tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .middle)
     }
     
 }

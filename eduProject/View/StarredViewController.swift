@@ -13,6 +13,8 @@ class StarredViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        DataService.shared.delegateFavorites = self
 
         tableView.delegate = self
         tableView.dataSource = self
@@ -27,8 +29,9 @@ class StarredViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        tableView.reloadData()
+        refresh()
     }
+    
 
 }
 
@@ -50,13 +53,6 @@ extension StarredViewController : UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func chooseFavorite(_ rep : Repositary) {
-        
-        DataService.shared.chooseFavorite(rep)
-        tableView.reloadData()
-            
-    }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row < DataService.shared.favorites.count {
             let repoToShow = DataService.shared.favorites[indexPath.row]
@@ -64,6 +60,9 @@ extension StarredViewController : UITableViewDelegate, UITableViewDataSource {
                 let sb = UIStoryboard(name: "Main", bundle: nil)
                 let newVC = sb.instantiateViewController(withIdentifier: "detailVCid") as! DetailViewController
                 newVC.repo = repoToShow
+                if let repoName = repoToShow.fullName {
+                    DataService.shared.readCommitsFromDB(repoName: repoName)
+                }
                 nc.pushViewController(newVC, animated: true)
             }
         }
@@ -76,4 +75,34 @@ extension StarredViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 104//UITableView.automaticDimension
     }
+    
+    func chooseFavorite(_ rep : Repositary) {
+        
+        DataService.shared.chooseFavorite(rep)
+        
+        tableView.reloadData()
+            
+    }
+    
+}
+
+extension StarredViewController : DataModelDelegate {
+    
+    func refresh() {
+        tableView.reloadData()
+    }
+    
+    func refreshRow(index: Int) {
+        self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .fade)
+    }
+    
+    func error() {
+               let alert = UIAlertController(title: "Data Base is not available", message: "error of getting favorites", preferredStyle: .alert)
+
+                alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
+               
+                self.present(alert, animated: true)
+    
+    }
+    
 }

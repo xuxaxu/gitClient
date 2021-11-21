@@ -66,7 +66,7 @@ class GitHubService {
         
     }
     
-    func getInfoRepo(commitsUrl: String, completion: @escaping ([ElementCommit]?) -> Void) {
+    func getInfoRepo(commitsUrl: String, repoName: String, completion: @escaping ([ElementCommit]?) -> Void) {
         
         guard let userName = self.userName, let token = self.token else {
             completion( nil)
@@ -96,14 +96,16 @@ class GitHubService {
                 if error == nil,
                     let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == 200,
                     let data = data,
-                   let repoDecoded = try? JSONDecoder().decode([ElementCommit].self, from: data) {
+                    var repoDecoded = try? JSONDecoder().decode([ElementCommit].self, from: data) {
+                    if repoDecoded.count > 10 {
+                        repoDecoded = repoDecoded.dropLast(repoDecoded.count - 10)
+                    }
+                    for commit in repoDecoded {
+                        commit.repoName = repoName
+                    }
                     
                     DispatchQueue.main.async {
-                        if repoDecoded.count > 10 {
-                            completion(repoDecoded.dropLast(repoDecoded.count - 10))
-                        } else {
-                            completion(repoDecoded)
-                        }
+                        completion(repoDecoded)
                     }
                 } else {
                     // Failure

@@ -12,14 +12,13 @@ class MainViewController: UIViewController {
 
     @IBOutlet weak private var tableView: UITableView!
     
-    private var dataModel = DataModel()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = .systemTeal
         
-        dataModel.delegate = self
+        DataService.shared.delegate = self
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "MainTableViewCell", bundle: .main), forCellReuseIdentifier: "mainCell")
@@ -29,7 +28,7 @@ class MainViewController: UIViewController {
     
     private func configure() {
         
-        dataModel.loadData()
+        DataService.shared.loadData()
         
         self.tableView.backgroundColor = .systemTeal
         
@@ -38,16 +37,19 @@ class MainViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        tableView.reloadData()
+        refresh()
     }
     
 }
 
 extension MainViewController : DataModelDelegate {
     
-    func dataDidRecieve(data: [Repositary]) {
-        DataService.shared.repositories = data
-        self.tableView.reloadData()
+    func refresh() {
+        tableView.reloadData()
+    }
+    
+    func refreshRow(index: Int) {
+        self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .fade)
     }
     
     func error() {
@@ -59,17 +61,6 @@ extension MainViewController : DataModelDelegate {
     
     }
     
-    func avatarLoaded(img: UIImage, repoName: String) {
-        var inx = 0
-        for (index, item) in DataService.shared.repositories.enumerated() {
-            if item.name == repoName {
-                DataService.shared.repositories[index].avatar = img
-                inx = index
-                break
-            }
-        }
-        self.tableView.reloadRows(at: [IndexPath(row: inx, section: 0)], with: .fade)
-    }
 }
 
 extension MainViewController : UITableViewDelegate, UITableViewDataSource {
@@ -83,7 +74,8 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource {
             let rep = DataService.shared.repositories[indexPath.row]
             cell.rep = rep
             cell.chooseFavorite = chooseFavorite(_:)
-            cell.configure(fav: DataService.shared.favorites.contains(rep))
+            let isContains = (DataService.shared.favorites.containRep(rep: rep) != nil) ? true : false
+            cell.configure(fav: isContains)
             return cell
         } else {
             return UITableViewCell()
@@ -105,6 +97,9 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource {
                 let sb = UIStoryboard(name: "Main", bundle: nil)
                 let newVC = sb.instantiateViewController(withIdentifier: "detailVCid") as! DetailViewController
                 newVC.repo = repoToShow
+                if let commitsUrl = repoToShow.commitsUrl {
+                    DataService.shared.loadCommits(commitsUrl: commitsUrl, repoName: repoToShow.fullName ?? "nopes")
+                }
                 nc.pushViewController(newVC, animated: true)
             }
         }

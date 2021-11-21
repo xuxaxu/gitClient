@@ -42,8 +42,8 @@ class MainTableViewCell: UITableViewCell {
     
     func configure(fav: Bool) {
         lblMain.text = rep?.name
-        lbl2.text = rep?.description ?? ""
-        foto.image = rep?.avatar
+        lbl2.text = rep?.descript ?? ""
+        foto.image = DataService.shared.getAvatar(url: rep?.owner?.avatarUrl)
         langLbl.text = rep?.language
         forksLbl.text = "⑂" + String(rep?.forksCount ?? 0)
         starsLbl.text = "✮" + String(rep?.stars ?? 0)

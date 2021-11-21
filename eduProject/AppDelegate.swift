@@ -31,6 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBar.appearance().backgroundImage = nil
         UITabBar.appearance().shadowImage = nil
         
+        DataService.shared.readReposFromDB()
+        
         return true
     }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		35E67B77CC84C11AE0BB9D58 /* Pods_eduProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A2292D9CC434AC6957B9AF /* Pods_eduProject.framework */; };
 		C914C8702735277B0093AFC3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C86F2735277B0093AFC3 /* AppDelegate.swift */; };
 		C914C8722735277B0093AFC3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C8712735277B0093AFC3 /* SceneDelegate.swift */; };
 		C914C8742735277B0093AFC3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C8732735277B0093AFC3 /* ViewController.swift */; };
@@ -28,6 +29,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		82A2292D9CC434AC6957B9AF /* Pods_eduProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_eduProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		868761CF1687189118164C66 /* Pods-eduProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eduProject.release.xcconfig"; path = "Target Support Files/Pods-eduProject/Pods-eduProject.release.xcconfig"; sourceTree = "<group>"; };
+		A983CCF20CB7FC671539865C /* Pods-eduProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eduProject.debug.xcconfig"; path = "Target Support Files/Pods-eduProject/Pods-eduProject.debug.xcconfig"; sourceTree = "<group>"; };
 		C914C86C2735277B0093AFC3 /* eduProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C914C86F2735277B0093AFC3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C914C8712735277B0093AFC3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,17 +59,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35E67B77CC84C11AE0BB9D58 /* Pods_eduProject.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00824FC523918AE9F3498DE1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A983CCF20CB7FC671539865C /* Pods-eduProject.debug.xcconfig */,
+				868761CF1687189118164C66 /* Pods-eduProject.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		C914C8632735277B0093AFC3 = {
 			isa = PBXGroup;
 			children = (
 				C914C86E2735277B0093AFC3 /* eduProject */,
 				C914C86D2735277B0093AFC3 /* Products */,
+				00824FC523918AE9F3498DE1 /* Pods */,
+				E09FED37F496219569CE3CD4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -127,6 +144,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		E09FED37F496219569CE3CD4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				82A2292D9CC434AC6957B9AF /* Pods_eduProject.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -134,9 +159,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C914C8802735277C0093AFC3 /* Build configuration list for PBXNativeTarget "eduProject" */;
 			buildPhases = (
+				49F253CF09C01C8854EBA6DB /* [CP] Check Pods Manifest.lock */,
 				C914C8682735277B0093AFC3 /* Sources */,
 				C914C8692735277B0093AFC3 /* Frameworks */,
 				C914C86A2735277B0093AFC3 /* Resources */,
+				50FBDC6D83F36157164BCC95 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -194,6 +221,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		49F253CF09C01C8854EBA6DB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-eduProject-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		50FBDC6D83F36157164BCC95 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-eduProject/Pods-eduProject-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-eduProject/Pods-eduProject-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-eduProject/Pods-eduProject-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C914C8682735277B0093AFC3 /* Sources */ = {
@@ -356,6 +425,7 @@
 		};
 		C914C8812735277C0093AFC3 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A983CCF20CB7FC671539865C /* Pods-eduProject.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -384,6 +454,7 @@
 		};
 		C914C8822735277C0093AFC3 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 868761CF1687189118164C66 /* Pods-eduProject.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
