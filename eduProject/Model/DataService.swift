@@ -96,16 +96,22 @@ class DataService {
 
     //favorites
     func chooseFavorite(_ rep : Repositary) {
+    
         
         if let index = self.favorites.containRep(rep: rep) {
             self.favorites.remove(at: index)
+            
+            self.delegate?.refresh()
+            
+            let fullName = rep.fullName
             removeRepoFromDB(repo: rep)
             
-            removeCommitsFromDB(repoName: rep.fullName ?? "")
+            removeCommitsFromDB(repoName: fullName ?? "")
             
         } else {
             self.favorites.append(rep)
-            saveReposToDB(repos: favorites)
+            //saveReposToDB(repos: favorites)
+            saveOneRepoToDB(repo: rep)
             
             if let urlCommits = rep.commitsUrl, let fullName = rep.fullName {
                 GitHubService.shared.getInfoRepo(commitsUrl: urlCommits, repoName: fullName) { commits in
@@ -163,7 +169,7 @@ class DataService {
     }
     
     func removeRepoFromDB(repo: Repositary) {
-        var obj = self.localRealm.object(ofType: Repositary.self, forPrimaryKey: repo.fullName)
+        let obj = self.localRealm.object(ofType: Repositary.self, forPrimaryKey: repo.fullName)
             do {
                 try self.localRealm.write {
                     if obj != nil {
@@ -208,10 +214,7 @@ class DataService {
             do {
                 try self.localRealm.write {
                     let objectsToDelete = self.localRealm.objects(ElementCommit.self).filter("repoName = %@", repoName)
-                        print("remove from db commmmmit __________________________________")
-                        print(objectsToDelete)
                         self.localRealm.delete(objectsToDelete)
-                    print("end of remove from db commmmmit __________________________________")
                 }
             } catch {
                 print("error saving into db")
