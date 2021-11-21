@@ -193,6 +193,7 @@ protocol DataModelDelegate: AnyObject {
     func refresh()
     func error()
     func refreshRow(index: Int)
+    func endAnimation()
 }
 
 /*

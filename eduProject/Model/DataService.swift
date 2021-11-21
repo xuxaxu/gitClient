@@ -51,6 +51,11 @@ class DataService {
                         if let img = image {
                             self.avatars[avUrl] = img
                             self.delegate?.refreshRow(index: index)
+                            
+                            //end animation
+                            if index == repos.count - 1 {
+                                self.delegate?.endAnimation()
+                            }
                         }
                     }
                         
@@ -80,6 +85,11 @@ class DataService {
                     if let img = image {
                         self.avatars[avUrl] = img
                         self.delegateCommit?.refreshRow(index: indx)
+                        
+                        //end animate
+                        if indx == commits.count - 1 {
+                            self.delegateCommit?.endAnimation()
+                        }
                     }
                 }
             }

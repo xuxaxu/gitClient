@@ -11,6 +11,8 @@ class StarredViewController: UIViewController {
 
     @IBOutlet private var tableView: UITableView!
     
+    var animateView: AnimationView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,6 +32,10 @@ class StarredViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         refresh()
+    }
+    
+    func endAnimation() {
+        animateView?.removeFromVC()
     }
     
 
@@ -63,6 +69,7 @@ extension StarredViewController : UITableViewDelegate, UITableViewDataSource {
                 if let repoName = repoToShow.fullName {
                     DataService.shared.readCommitsFromDB(repoName: repoName)
                 }
+                newVC.showAnimate = false
                 nc.pushViewController(newVC, animated: true)
             }
         }

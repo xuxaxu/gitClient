@@ -12,6 +12,8 @@ class MainViewController: UIViewController {
 
     @IBOutlet weak private var tableView: UITableView!
     
+    private var animateView = AnimationView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,6 +30,9 @@ class MainViewController: UIViewController {
     
     private func configure() {
         
+        //start animate
+        animateView.startInVC(vc: self)
+         
         DataService.shared.loadData()
         
         self.tableView.backgroundColor = .systemTeal
@@ -38,6 +43,11 @@ class MainViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         refresh()
+        
+    }
+    
+    func endAnimation() {
+        animateView.removeFromVC()
     }
     
 }

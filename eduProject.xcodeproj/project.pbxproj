@@ -26,6 +26,7 @@
 		C914C89B2742AE240093AFC3 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C89A2742AE240093AFC3 /* DetailViewController.swift */; };
 		C951AF4527492B9500D2C29E /* imagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951AF4427492B9500D2C29E /* imagesService.swift */; };
 		C951AF472749622E00D2C29E /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951AF462749622E00D2C29E /* DataService.swift */; };
+		C9B5AC07274AAF5C0092B015 /* animationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B5AC06274AAF5C0092B015 /* animationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		C914C89A2742AE240093AFC3 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		C951AF4427492B9500D2C29E /* imagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imagesService.swift; sourceTree = "<group>"; };
 		C951AF462749622E00D2C29E /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		C9B5AC06274AAF5C0092B015 /* animationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = animationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +74,6 @@
 				A983CCF20CB7FC671539865C /* Pods-eduProject.debug.xcconfig */,
 				868761CF1687189118164C66 /* Pods-eduProject.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -133,6 +134,7 @@
 				C914C889274105C00093AFC3 /* MyTabBarVC.swift */,
 				C914C8752735277B0093AFC3 /* Main.storyboard */,
 				C914C8732735277B0093AFC3 /* ViewController.swift */,
+				C9B5AC06274AAF5C0092B015 /* animationView.swift */,
 				C914C887273C29900093AFC3 /* StarredViewController.swift */,
 				C914C885273C29770093AFC3 /* MainViewController.swift */,
 				C914C88B274108E70093AFC3 /* MainTableViewCell.swift */,
@@ -280,6 +282,7 @@
 				C914C89227411A270093AFC3 /* GitHubService.swift in Sources */,
 				C914C8722735277B0093AFC3 /* SceneDelegate.swift in Sources */,
 				C914C89027410DA60093AFC3 /* dataModel.swift in Sources */,
+				C9B5AC07274AAF5C0092B015 /* animationView.swift in Sources */,
 				C914C88A274105C00093AFC3 /* MyTabBarVC.swift in Sources */,
 				C914C886273C29770093AFC3 /* MainViewController.swift in Sources */,
 			);

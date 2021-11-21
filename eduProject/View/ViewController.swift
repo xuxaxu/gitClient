@@ -19,8 +19,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        //loginTextView.text = "xuxaxu"
-        //tokenTextView.text = "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"
+        //tokenTextView.text =
     }
 
    

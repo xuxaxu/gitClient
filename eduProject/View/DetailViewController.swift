@@ -27,7 +27,16 @@ class DetailViewController: UIViewController {
     
     var repo : Repositary?
     
+    private var animateView = AnimationView()
+    
+    var showAnimate = true
+    
     override func viewDidLoad() {
+        
+        if self.showAnimate {
+            self.animateView.startInVC(vc: self)
+        }
+        
         super.viewDidLoad()
 
         DataService.shared.delegateCommit = self
@@ -48,10 +57,14 @@ class DetailViewController: UIViewController {
             descriptionLbl.text = rep.descript
             langLbl.text = rep.language
             if let forks = rep.forksCount {
-                forksLbl.text = String(forks)
+                forksLbl.text = "⑂" + String(forks)
+            } else {
+                forksLbl.text = "⑂ 0"
             }
             if let stars = rep.stars {
-                starsLbl.text = String(stars )
+                starsLbl.text = "✰" + String(stars )
+            } else {
+                starsLbl.text = "✰ 0"
             }
             
         } else {
@@ -105,6 +118,10 @@ extension DetailViewController : DataModelDelegate {
                
                 self.present(alert, animated: true)
     
+    }
+    
+    func endAnimation() {
+        animateView.removeFromVC()
     }
     
 }
