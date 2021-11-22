@@ -29,6 +29,8 @@ class DetailViewController: UIViewController {
     
     private var animateView = AnimationView()
     
+    let refreshControl = UIRefreshControl()
+    
     var showAnimate = true
     
     override func viewDidLoad() {
@@ -43,6 +45,8 @@ class DetailViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "TableViewCellCommit", bundle: .main), forCellReuseIdentifier: "commitCell")
+        
+        
         
         configure()
         
@@ -70,9 +74,22 @@ class DetailViewController: UIViewController {
         } else {
             //self.dismiss(animated: true, completion: nil)
         }
+        
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(self.reloadCommits(_:)), for: .valueChanged)
+        tableView.refreshControl = refreshControl
     }
 
-
+    @objc private func reloadCommits(_ sender: AnyObject ) {
+        if let commitsUrl = repo?.commitsUrl {
+            
+            //show animation while refresh
+            self.animateView.startInVC(vc: self)
+            
+            DataService.shared.loadCommits(commitsUrl: commitsUrl, repoName: repo?.fullName ?? "nopes")
+        }
+    }
+    
 }
 
 extension DetailViewController : UITableViewDelegate, UITableViewDataSource {
@@ -122,6 +139,7 @@ extension DetailViewController : DataModelDelegate {
     
     func endAnimation() {
         animateView.removeFromVC()
+        refreshControl.endRefreshing()
     }
     
 }

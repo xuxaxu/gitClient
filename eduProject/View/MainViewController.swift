@@ -28,16 +28,26 @@ class MainViewController: UIViewController {
         configure()
     }
     
-    private func configure() {
-        
+    private let refreshControl = UIRefreshControl()
+
+    @objc func reloadData(_ sender: AnyObject) {
         //start animate
         animateView.startInVC(vc: self)
          
         DataService.shared.loadData()
+    }
+    
+    private func configure() {
         
         self.tableView.backgroundColor = .systemTeal
         
         self.tableView.estimatedRowHeight = 104
+        
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(self.reloadData(_:)), for: .valueChanged)
+        tableView.refreshControl = refreshControl
+        
+        reloadData(self)
 
     }
     
@@ -48,6 +58,7 @@ class MainViewController: UIViewController {
     
     func endAnimation() {
         animateView.removeFromVC()
+        refreshControl.endRefreshing()
     }
     
 }
