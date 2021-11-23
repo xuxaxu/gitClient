@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import KeychainAccess
 
 
 class ViewController: UIViewController {
@@ -16,10 +17,29 @@ class ViewController: UIViewController {
     
     let gitHubService = GitHubService.shared
     
+    private var user: String?
+    
+    private var token: String?
+    
+    private var saveCredentials = true
+    
+ 
+    @IBOutlet weak var btnSaveCredentials: UIImageView!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         //tokenTextView.text =
+        
+        //try to authenticate with last input token
+        tryLastAuthentication()
+        
+        let tabGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.changeSavingCredentials(_:)))
+        
+        btnSaveCredentials.addGestureRecognizer(tabGestureRecognizer)
+        showBtnSaveCredentials()
+    
     }
 
    
@@ -28,6 +48,8 @@ class ViewController: UIViewController {
         guard let token = tokenTextView.text, let user = loginTextView.text else {
             return
         }
+        self.token = token
+        self.user = user
             
         gitHubService.authenticateUsr(user: user, token: token, completion: { success in
             if success {
@@ -48,6 +70,12 @@ class ViewController: UIViewController {
     
     func complitAuth() {
         
+        let userStr = user ?? ""
+        
+        if saveCredentials {
+            try? savePassword(login: userStr, password: token)
+        }
+        
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "myTabBarVC")
             vc.modalPresentationStyle = .fullScreen
@@ -55,5 +83,56 @@ class ViewController: UIViewController {
 
 
 }
-
+    func savePassword(login: String, password: String?) throws {
+        
+        guard let password = password else {
+            return
+        }
+        
+        var notEmptyLogin = "_"
+        if login != "" {
+            notEmptyLogin = login
+        }
+        
+        let keychain = Keychain(service: "MyGithubClientApp")
+        keychain[notEmptyLogin] = password
+        
+        keychain["lastIncome"] = password
+    }
+    
+    func loadPassword(login: String) throws -> String {
+        let keychain = Keychain(service: "MyGithubClientApp")
+        if let receivedPassword = keychain[login] {
+            return receivedPassword
+        }
+        return ""
+    }
+    
+    private func tryLastAuthentication() {
+        guard let lastToken = try? loadPassword(login: "lastIncome") else {
+            return
+        }
+        
+        if lastToken != "" {
+            gitHubService.authenticateUsr(user: "", token: lastToken, completion: { success in
+                if success {
+                    self.complitAuth()
+                }
+            })
+        }
+    }
+    
+    private func showBtnSaveCredentials() {
+        if saveCredentials {
+            btnSaveCredentials.image = UIImage(systemName: "checkmark.seal.fill")
+        } else {
+            btnSaveCredentials.image = UIImage(systemName: "checkmark.seal")
+        }
+    }
+    
+    @objc private func changeSavingCredentials(_ sender: UIGestureRecognizer) {
+        saveCredentials = !saveCredentials
+        showBtnSaveCredentials()
+    }
+    
 }

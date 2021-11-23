@@ -6,6 +6,7 @@ target 'eduProject' do
   use_frameworks!
 
   # Pods for eduProject
-	pod 'RealmSwift', '~>10'
+	pod 'RealmSwift', '~>10'  
+  pod 'KeychainAccess'
 
 end
