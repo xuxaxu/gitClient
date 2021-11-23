@@ -9,7 +9,7 @@ import UIKit
 import KeychainAccess
 
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet private weak var loginTextView: UITextField!
     
@@ -26,19 +26,26 @@ class ViewController: UIViewController {
  
     @IBOutlet weak var btnSaveCredentials: UIImageView!
     
+    var tryAutoAuthentication = true
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         //tokenTextView.text =
         
+        loginTextView.delegate = self
+        
         //try to authenticate with last input token
-        tryLastAuthentication()
+        if tryAutoAuthentication {
+            tryLastAuthentication()
+        }
         
         let tabGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.changeSavingCredentials(_:)))
         
         btnSaveCredentials.addGestureRecognizer(tabGestureRecognizer)
         showBtnSaveCredentials()
+        
     
     }
 
@@ -76,13 +83,18 @@ class ViewController: UIViewController {
             try? savePassword(login: userStr, password: token)
         }
         
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "myTabBarVC")
-            vc.modalPresentationStyle = .fullScreen
-            self.present(vc, animated: true)
-
-
-}
+        loginTextView.text = nil
+        tokenTextView.text = nil
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "myTabBarVC")
+        vc.modalPresentationStyle = .fullScreen
+        if let myTab = vc as? MyTabBarVC {
+            myTab.authVC = self
+        }
+        self.present(vc, animated: true)
+    }
+    
     func savePassword(login: String, password: String?) throws {
         
         guard let password = password else {
@@ -100,7 +112,7 @@ class ViewController: UIViewController {
         keychain["lastIncome"] = password
     }
     
-    func loadPassword(login: String) throws -> String {
+    private func loadPassword(login: String) throws -> String {
         let keychain = Keychain(service: "MyGithubClientApp")
         if let receivedPassword = keychain[login] {
             return receivedPassword
@@ -133,6 +145,14 @@ class ViewController: UIViewController {
     @objc private func changeSavingCredentials(_ sender: UIGestureRecognizer) {
         saveCredentials = !saveCredentials
         showBtnSaveCredentials()
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == loginTextView, let textLogin = textField.text {
+            if let savedPassword = try? loadPassword(login: textLogin) {
+                tokenTextView.text = savedPassword
+            }
+        }
     }
     
 }

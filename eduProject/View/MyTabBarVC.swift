@@ -8,6 +8,8 @@
 import UIKit
 
 class MyTabBarVC: UITabBarController {
+    
+    var authVC : ViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
