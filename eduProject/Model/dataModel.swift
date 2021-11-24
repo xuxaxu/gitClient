@@ -28,6 +28,8 @@ class Repositary : Object, Decodable  {
     @Persisted var fullName : String?
     @Persisted var owner : User?
     @Persisted var commitsUrl : String?
+    @Persisted var login : String?
+    @Persisted var id : String?
      
     enum CodingKeys: String, CodingKey {
            case descript = "description"
@@ -55,7 +57,7 @@ class Repositary : Object, Decodable  {
     }
     
     override class func primaryKey() -> String? {
-        return "fullName"
+        return "id"
     }
     
     func copyRepo() -> Repositary {
@@ -72,6 +74,8 @@ class Repositary : Object, Decodable  {
         newRep.forksCount = self.forksCount
         newRep.name = self.name
         newRep.stars = self.stars
+        newRep.login = self.login
+        newRep.id = self.id
         
         return newRep
     }
@@ -150,6 +154,8 @@ class ElementCommit : Object, Decodable {
     @Persisted var committer : User?
     @Persisted var id : String?
     @Persisted var repoName : String?
+    @Persisted var login : String?
+    @Persisted var uniqId : String?
     
     enum CodingKeys : String, CodingKey {
         case commit = "commit"
@@ -167,7 +173,7 @@ class ElementCommit : Object, Decodable {
     }
     
     override class func primaryKey() -> String? {
-        return "id"
+        return "uniqId"
     }
     
     func copyCommit() -> ElementCommit {
@@ -184,6 +190,8 @@ class ElementCommit : Object, Decodable {
         newCommit.committer?.avatarUrl = self.committer?.avatarUrl
         newCommit.id = self.id
         newCommit.repoName = self.repoName
+        newCommit.login = self.login
+        newCommit.uniqId = self.uniqId
         
         return newCommit
     }

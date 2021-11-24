@@ -12,6 +12,7 @@ class MainViewController: UIViewController {
 
     @IBOutlet weak private var tableView: UITableView!
     
+    //make animation with custom view
     private var animateView = AnimationView()
     
     override func viewDidLoad() {
@@ -19,6 +20,7 @@ class MainViewController: UIViewController {
 
         self.view.backgroundColor = .systemTeal
         
+        //use DataService for managing and saving data, and it know about all controllers
         DataService.shared.delegate = self
         
         tableView.delegate = self
@@ -28,12 +30,14 @@ class MainViewController: UIViewController {
         configure()
     }
     
+    //for updating
     private let refreshControl = UIRefreshControl()
 
     @objc func reloadData(_ sender: AnyObject) {
         //start animate
         animateView.startInVC(vc: self)
          
+        //all work with data in DataService
         DataService.shared.loadData()
     }
     
@@ -47,13 +51,15 @@ class MainViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(self.reloadData(_:)), for: .valueChanged)
         tableView.refreshControl = refreshControl
         
+        //read favorites from db to mark them on main screen
+        DataService.shared.readReposFromDB()
+        
         reloadData(self)
 
     }
     
     override func viewDidAppear(_ animated: Bool) {
         refresh()
-        
     }
     
     func endAnimation() {
@@ -63,6 +69,7 @@ class MainViewController: UIViewController {
     
 }
 
+//same usage from DataService
 extension MainViewController : DataModelDelegate {
     
     func refresh() {
@@ -92,9 +99,12 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "mainCell", for: indexPath) as? MainTableViewCell {
+            //data for cell in elements of array repositaries
             let rep = DataService.shared.repositories[indexPath.row]
             cell.rep = rep
+            //func for saving in favorites
             cell.chooseFavorite = chooseFavorite(_:)
+            //show heart or not
             let isContains = (DataService.shared.favorites.containRep(rep: rep) != nil) ? true : false
             cell.configure(fav: isContains)
             return cell
@@ -113,14 +123,14 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row < DataService.shared.repositories.count {
+            
+            //show details if select row in NC
             let repoToShow = DataService.shared.repositories[indexPath.row]
             if let nc = self.navigationController {
                 let sb = UIStoryboard(name: "Main", bundle: nil)
                 let newVC = sb.instantiateViewController(withIdentifier: "detailVCid") as! DetailViewController
                 newVC.repo = repoToShow
-                if let commitsUrl = repoToShow.commitsUrl {
-                    DataService.shared.loadCommits(commitsUrl: commitsUrl, repoName: repoToShow.fullName ?? "nopes")
-                }
+                
                 nc.pushViewController(newVC, animated: true)
             }
         }

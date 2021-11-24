@@ -15,6 +15,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet private weak var tokenTextView: UITextField!
     
+    //check authentication
     let gitHubService = GitHubService.shared
     
     private var user: String?
@@ -26,13 +27,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
  
     @IBOutlet weak var btnSaveCredentials: UIImageView!
     
+    //default - use auto, if after exit - no auto
     var tryAutoAuthentication = true
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        //tokenTextView.text =
         
         loginTextView.delegate = self
         
@@ -41,15 +41,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
             tryLastAuthentication()
         }
         
+        //for switch saving credentials
         let tabGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.changeSavingCredentials(_:)))
         
         btnSaveCredentials.addGestureRecognizer(tabGestureRecognizer)
         showBtnSaveCredentials()
-        
-    
+            
     }
 
-   
+   //authentication to github
     @IBAction func authGit(_ sender: Any) {
          
         guard let token = tokenTextView.text, let user = loginTextView.text else {
@@ -70,11 +70,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 self.present(alert, animated: true)
             }
         })
-              
     }
     
-    
-    
+    //show main vc after success auth
     func complitAuth() {
         
         let userStr = user ?? ""
@@ -83,9 +81,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
             try? savePassword(login: userStr, password: token)
         }
         
+        //clear for possible exit from auth
         loginTextView.text = nil
         tokenTextView.text = nil
         
+        //tab bar is in storyboard
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "myTabBarVC")
         vc.modalPresentationStyle = .fullScreen
@@ -95,6 +95,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         self.present(vc, animated: true)
     }
     
+    //saving token in keychain after succesfull auth
     func savePassword(login: String, password: String?) throws {
         
         guard let password = password else {
@@ -106,12 +107,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
             notEmptyLogin = login
         }
         
+        //name of the app for surching in keychain
         let keychain = Keychain(service: "MyGithubClientApp")
         keychain[notEmptyLogin] = password
         
+        //use "lastIncome" for saving and surching last succesfull auth
         keychain["lastIncome"] = password
     }
     
+    //find password for login and our app in keychain
     private func loadPassword(login: String) throws -> String {
         let keychain = Keychain(service: "MyGithubClientApp")
         if let receivedPassword = keychain[login] {
@@ -120,6 +124,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         return ""
     }
     
+    //try find token from last auth and try to auth with it
     private func tryLastAuthentication() {
         guard let lastToken = try? loadPassword(login: "lastIncome") else {
             return
@@ -134,6 +139,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    //connection checkmark view and variable
     private func showBtnSaveCredentials() {
         if saveCredentials {
             btnSaveCredentials.image = UIImage(systemName: "checkmark.seal.fill")
@@ -147,6 +153,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         showBtnSaveCredentials()
     }
     
+    //surch saved token for entering login in keychain and fill textview
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == loginTextView, let textLogin = textField.text {
             if let savedPassword = try? loadPassword(login: textLogin) {

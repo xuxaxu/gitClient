@@ -29,6 +29,7 @@ class DetailViewController: UIViewController {
     
     private var animateView = AnimationView()
     
+    //for updating commits
     let refreshControl = UIRefreshControl()
     
     var showAnimate = true
@@ -78,6 +79,9 @@ class DetailViewController: UIViewController {
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(self.reloadCommits(_:)), for: .valueChanged)
         tableView.refreshControl = refreshControl
+        
+        //try to update from github in both cases from db or not
+        reloadCommits(self)
     }
 
     @objc private func reloadCommits(_ sender: AnyObject ) {
@@ -87,6 +91,8 @@ class DetailViewController: UIViewController {
             self.animateView.startInVC(vc: self)
             
             DataService.shared.loadCommits(commitsUrl: commitsUrl, repoName: repo?.fullName ?? "nopes")
+
+            
         }
     }
     
@@ -134,12 +140,21 @@ extension DetailViewController : DataModelDelegate {
                 alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
                
                 self.present(alert, animated: true)
+        
+        if view.subviews.contains(animateView) {
+            animateView.removeFromVC()
+        }
     
     }
     
     func endAnimation() {
         animateView.removeFromVC()
         refreshControl.endRefreshing()
+        
+        //if we in favorites we need to save new commits
+        if let curRepo = self.repo, (DataService.shared.favorites.containRep(rep: curRepo) != nil) {
+            DataService.shared.saveCommitsToDB(commits: DataService.shared.currentCommits)
+        }
     }
     
 }

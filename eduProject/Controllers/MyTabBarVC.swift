@@ -20,7 +20,6 @@ class MyTabBarVC: UITabBarController {
 
     private func configure() {
         self.tabBar.tintColor = .white
-        
     }
    
 

@@ -44,8 +44,15 @@ class DataService {
         }
     }
     
+    //load images after loading list
     func loadImages(repos: [Repositary]) {
         for (index,rep) in repos.enumerated() {
+            
+            //get add info in same loop with images
+            GitHubService.shared.getAdditinalInfo(repo: rep) { newRep in
+                self.delegate?.refreshRow(index: index)
+            }
+            
                 if let avUrl = rep.owner?.avatarUrl {
                     ImagesService.shared.getImage(url: avUrl) { image in
                         if let img = image {
@@ -59,10 +66,11 @@ class DataService {
                         }
                     }
                         
-                    }
+                }
             }
     }
     
+    //load commits for detail
     func loadCommits(commitsUrl: String, repoName: String) {
         GitHubService.shared.getInfoRepo(commitsUrl: commitsUrl, repoName: repoName) { commits in
             guard let elementsCommit = commits else {
@@ -104,7 +112,7 @@ class DataService {
         }
     }
 
-    //favorites
+    //favorites: if was favorite remove it, if wasn't append
     func chooseFavorite(_ rep : Repositary) {
     
         
@@ -113,18 +121,18 @@ class DataService {
             
             self.delegate?.refresh()
             
-            let fullName = rep.fullName
-            removeRepoFromDB(repo: rep)
-            
-            removeCommitsFromDB(repoName: fullName ?? "")
+            if let id = rep.id {
+                removeRepoFromDB(repo: rep)
+                removeCommitsFromDB(repoName: id)
+            }
             
         } else {
             self.favorites.append(rep)
-            //saveReposToDB(repos: favorites)
+    
             saveOneRepoToDB(repo: rep)
             
-            if let urlCommits = rep.commitsUrl, let fullName = rep.fullName {
-                GitHubService.shared.getInfoRepo(commitsUrl: urlCommits, repoName: fullName) { commits in
+            if let urlCommits = rep.commitsUrl, let id = rep.id {
+                GitHubService.shared.getInfoRepo(commitsUrl: urlCommits, repoName: id) { commits in
                     self.saveCommitsToDB(commits: commits)
                 }
             }
@@ -142,44 +150,39 @@ class DataService {
     //work with db
     private func saveOneRepoToDB(repo: Repositary) {
         let newRepo = repo.copyRepo()
+        
+        guard let fullName = newRepo.fullName, let login = GitHubService.shared.userName else {
+            return
+        }
+            
+        //save login for different favorites of different users
+        newRepo.id = fullName + login
+        newRepo.login = login
+        repo.id = newRepo.id //for commits
+        
         do {
-            try self.localRealm.write {
+            try? self.localRealm.write {
                 self.localRealm.add(newRepo, update: .modified)
                 
             }
-        } catch {
-            print("error saving into db")
         }
         
     }
     
-    private func saveReposToDB(repos: [Repositary]) {
-        
-            do {
-                try self.localRealm.write {
-                    self.localRealm.add(repos, update: .modified)
-                    
-                }
-            } catch {
-                print("error saving into db")
-            }
-        
-        
-    }
-    
     func readReposFromDB() {
-            
-            let  savedrepos = self.localRealm.objects(Repositary.self)
+        if let login = GitHubService.shared.userName{
+            let  savedrepos = self.localRealm.objects(Repositary.self).filter("login = %@", login)
             
             guard !savedrepos.isEmpty else {
                 return
             }
             
             favorites = Array(savedrepos)
+        }
     }
     
     func removeRepoFromDB(repo: Repositary) {
-        let obj = self.localRealm.object(ofType: Repositary.self, forPrimaryKey: repo.fullName)
+        let obj = self.localRealm.object(ofType: Repositary.self, forPrimaryKey: repo.id)
             do {
                 try self.localRealm.write {
                     if obj != nil {
@@ -187,11 +190,11 @@ class DataService {
                     }
                 }
             } catch {
-                print("error saving into db")
+                print("error removing from db")
             }
     }
     
-    private func saveCommitsToDB(commits: [ElementCommit]?) {
+    func saveCommitsToDB(commits: [ElementCommit]?) {
         
         guard let commits = commits else {
             return
@@ -200,6 +203,14 @@ class DataService {
         var newCommits : [ElementCommit] = []
         for commit in commits {
             let newCommit = commit.copyCommit()
+            
+            if let id = newCommit.id, let login = GitHubService.shared.userName {
+                //save logins of different users because not to delete common commits
+                newCommit.login = login
+                newCommit.uniqId = id + login
+                commit.uniqId = newCommit.uniqId
+            }
+            
             newCommits.append(newCommit)
         }
 
@@ -215,19 +226,27 @@ class DataService {
     
     func readCommitsFromDB(repoName: String) {
         
-            let  savedrepos = self.localRealm.objects(ElementCommit.self).filter("repoName = %@", repoName)
+        if let login = GitHubService.shared.userName {
+        
+            let  savedrepos = self.localRealm.objects(ElementCommit.self).filter("repoName = %@ AND login = %@", repoName, login)
                 self.currentCommits = Array(savedrepos)
+        }
             
     }
     
     func removeCommitsFromDB(repoName: String) {
+        
+        guard let login = GitHubService.shared.userName else {
+            return
+        }
+        
             do {
                 try self.localRealm.write {
-                    let objectsToDelete = self.localRealm.objects(ElementCommit.self).filter("repoName = %@", repoName)
+                    let objectsToDelete = self.localRealm.objects(ElementCommit.self).filter("repoName = %@ AND login = %@", repoName, login)
                         self.localRealm.delete(objectsToDelete)
                 }
             } catch {
-                print("error saving into db")
+                print("error removing commits from db")
             }
     }
     

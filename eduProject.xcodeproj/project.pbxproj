@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		35E67B77CC84C11AE0BB9D58 /* Pods_eduProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A2292D9CC434AC6957B9AF /* Pods_eduProject.framework */; };
-		C90FFAC3274D6C5800E520F9 /* finVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90FFAC2274D6C5800E520F9 /* finVC.swift */; };
+		C90FFAC3274D6C5800E520F9 /* FinVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90FFAC2274D6C5800E520F9 /* FinVC.swift */; };
 		C914C8702735277B0093AFC3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C86F2735277B0093AFC3 /* AppDelegate.swift */; };
 		C914C8722735277B0093AFC3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C8712735277B0093AFC3 /* SceneDelegate.swift */; };
 		C914C8742735277B0093AFC3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914C8732735277B0093AFC3 /* ViewController.swift */; };
@@ -34,7 +34,7 @@
 		82A2292D9CC434AC6957B9AF /* Pods_eduProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_eduProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		868761CF1687189118164C66 /* Pods-eduProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eduProject.release.xcconfig"; path = "Target Support Files/Pods-eduProject/Pods-eduProject.release.xcconfig"; sourceTree = "<group>"; };
 		A983CCF20CB7FC671539865C /* Pods-eduProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eduProject.debug.xcconfig"; path = "Target Support Files/Pods-eduProject/Pods-eduProject.debug.xcconfig"; sourceTree = "<group>"; };
-		C90FFAC2274D6C5800E520F9 /* finVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finVC.swift; sourceTree = "<group>"; };
+		C90FFAC2274D6C5800E520F9 /* FinVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinVC.swift; sourceTree = "<group>"; };
 		C914C86C2735277B0093AFC3 /* eduProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C914C86F2735277B0093AFC3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C914C8712735277B0093AFC3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +79,38 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		C90FFAC4274ECDD300E520F9 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				C914C8732735277B0093AFC3 /* ViewController.swift */,
+				C914C889274105C00093AFC3 /* MyTabBarVC.swift */,
+				C914C885273C29770093AFC3 /* MainViewController.swift */,
+				C914C887273C29900093AFC3 /* StarredViewController.swift */,
+				C914C89A2742AE240093AFC3 /* DetailViewController.swift */,
+				C90FFAC2274D6C5800E520F9 /* FinVC.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		C90FFAC5274ECE1800E520F9 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				C914C88B274108E70093AFC3 /* MainTableViewCell.swift */,
+				C914C88C274108E70093AFC3 /* MainTableViewCell.xib */,
+				C914C89627429F330093AFC3 /* TableViewCellCommit.swift */,
+				C914C89727429F330093AFC3 /* TableViewCellCommit.xib */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		C90FFAC6274ECE5900E520F9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C914C8782735277C0093AFC3 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		C914C8632735277B0093AFC3 = {
 			isa = PBXGroup;
 			children = (
@@ -100,32 +132,32 @@
 		C914C86E2735277B0093AFC3 /* eduProject */ = {
 			isa = PBXGroup;
 			children = (
+				C90FFAC6274ECE5900E520F9 /* Resources */,
+				C90FFAC4274ECDD300E520F9 /* Controllers */,
 				C914C895274178F10093AFC3 /* View */,
 				C914C894274178D80093AFC3 /* Model */,
-				C914C893274178C30093AFC3 /* NetWork */,
+				C914C893274178C30093AFC3 /* Services */,
 				C914C86F2735277B0093AFC3 /* AppDelegate.swift */,
 				C914C8712735277B0093AFC3 /* SceneDelegate.swift */,
-				C914C8782735277C0093AFC3 /* Assets.xcassets */,
-				C914C87A2735277C0093AFC3 /* LaunchScreen.storyboard */,
 				C914C87D2735277C0093AFC3 /* Info.plist */,
 			);
 			path = eduProject;
 			sourceTree = "<group>";
 		};
-		C914C893274178C30093AFC3 /* NetWork */ = {
+		C914C893274178C30093AFC3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				C951AF462749622E00D2C29E /* DataService.swift */,
 				C951AF4427492B9500D2C29E /* imagesService.swift */,
 				C914C89127411A260093AFC3 /* GitHubService.swift */,
 			);
-			path = NetWork;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		C914C894274178D80093AFC3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				C914C88F27410DA60093AFC3 /* dataModel.swift */,
-				C951AF462749622E00D2C29E /* DataService.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -133,18 +165,10 @@
 		C914C895274178F10093AFC3 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				C914C889274105C00093AFC3 /* MyTabBarVC.swift */,
+				C90FFAC5274ECE1800E520F9 /* Cells */,
 				C914C8752735277B0093AFC3 /* Main.storyboard */,
-				C914C8732735277B0093AFC3 /* ViewController.swift */,
 				C9B5AC06274AAF5C0092B015 /* animationView.swift */,
-				C914C887273C29900093AFC3 /* StarredViewController.swift */,
-				C914C885273C29770093AFC3 /* MainViewController.swift */,
-				C914C88B274108E70093AFC3 /* MainTableViewCell.swift */,
-				C914C88C274108E70093AFC3 /* MainTableViewCell.xib */,
-				C914C89A2742AE240093AFC3 /* DetailViewController.swift */,
-				C914C89627429F330093AFC3 /* TableViewCellCommit.swift */,
-				C914C89727429F330093AFC3 /* TableViewCellCommit.xib */,
-				C90FFAC2274D6C5800E520F9 /* finVC.swift */,
+				C914C87A2735277C0093AFC3 /* LaunchScreen.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -280,7 +304,7 @@
 				C914C8742735277B0093AFC3 /* ViewController.swift in Sources */,
 				C914C89827429F330093AFC3 /* TableViewCellCommit.swift in Sources */,
 				C914C8702735277B0093AFC3 /* AppDelegate.swift in Sources */,
-				C90FFAC3274D6C5800E520F9 /* finVC.swift in Sources */,
+				C90FFAC3274D6C5800E520F9 /* FinVC.swift in Sources */,
 				C951AF4527492B9500D2C29E /* imagesService.swift in Sources */,
 				C914C88D274108E70093AFC3 /* MainTableViewCell.swift in Sources */,
 				C914C89227411A270093AFC3 /* GitHubService.swift in Sources */,

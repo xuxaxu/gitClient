@@ -8,7 +8,7 @@
 import UIKit
 import KeychainAccess
 
-class finVC: UIViewController {
+class FinVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +25,10 @@ class finVC: UIViewController {
             myTabBar.authVC?.tryAutoAuthentication = false
               try? myTabBar.authVC?.savePassword(login: "lastIncome", password: "")
         }
+        
+        //clear favorites loaded
+        DataService.shared.favorites = []
+        
         self.tabBarController?.dismiss(animated: true, completion: nil)
     }
     /*
